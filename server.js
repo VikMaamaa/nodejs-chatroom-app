@@ -70,3 +70,24 @@ var PORT = process.env.PORT || 3000
 server.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
+
+process.on('uncaughtException', err => {
+    console.log(err.name, err.message);
+    console.log('UNCAUGHT EXCEPTION! Shutting Down....')
+    process.exit(1);
+})
+
+process.on('unhandledRejection', err => {
+    console.log(err.name, err.message);
+    console.log('UNHANDLER REJECTION! Shutting Down....')
+    server.close(() => {
+        process.exit(1);
+    })
+})
+
+process.on('SIGTERM', () => {
+    console.log('SIGTERM RECEIVED. Shutting Down gracefully');
+    server.close(() => {
+        console.log('Process terminated!')
+    })
+})
